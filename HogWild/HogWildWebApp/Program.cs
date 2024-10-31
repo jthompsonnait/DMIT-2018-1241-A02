@@ -24,6 +24,7 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+
 // Add services to the container.
 //  :given (This is code that is provided when we create our application)
 //  supplied database connection due to the fact that we created this
@@ -51,7 +52,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //  The extension method will have a paramater: options.UseSqlServer()
 builder.Services.AddBackendDependencies(options =>
     options.UseSqlServer(connectionStringHogWild));
-
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

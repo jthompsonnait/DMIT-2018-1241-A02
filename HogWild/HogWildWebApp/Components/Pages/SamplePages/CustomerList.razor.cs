@@ -47,6 +47,7 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         protected PaginationState Pagination = new PaginationState { ItemsPerPage = 10 };
         #endregion
 
+        #region Methods
         //  search for an existing customer
         private void Search()
         {
@@ -59,7 +60,7 @@ namespace HogWildWebApp.Components.Pages.SamplePages
                 errorMessage = string.Empty;
 
                 //  reset feedback message to an empty string
-                feedbackMessage = String.Empty;
+                feedbackMessage = string.Empty;
 
                 //  clear the customer list before we do our search
                 Customers.Clear();
@@ -106,13 +107,13 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         //  new customer
         private void New()
         {
-
+            NavigationManager.NavigateTo("/SamplePages/CustomerEdit/0");
         }
 
-        //  edit selected customer
+        // edit selected Customer
         private void EditCustomer(int customerID)
         {
-
+            NavigationManager.NavigateTo($"/SamplePages/CustomerEdit/{customerID}");
         }
 
         //  new invoice for selected customer
@@ -120,5 +121,6 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         {
 
         }
+        #endregion
     }
 }

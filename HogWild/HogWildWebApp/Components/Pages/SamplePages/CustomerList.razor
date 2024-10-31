@@ -1,7 +1,6 @@
 ﻿@page "/SamplePages/CustomerList"
 <PageTitle>Customer List</PageTitle>
 <h3>Customer List</h3>
-@using HogWildWebApp.Components.Layout
 @using Microsoft.AspNetCore.Components.QuickGrid
 
 <header>
@@ -23,39 +22,39 @@
 </header>
 
 <body>
-@if (Customers.Count == 0)
-{
-    <p><em>Please enter either a last name or phone number</em></p>
-}
-else
-{
-    <div class="page-size-chooser">
-        Items per page:
-        <select @bind="@Pagination.ItemsPerPage">
-            <option>5</option>
-            <option>10</option>
-            <option>20</option>
-            <option>100</option> 
-        </select>
-    </div>
+    @if (Customers.Count == 0)
+    {
+        <p><em>Please enter either a last name or phone number</em></p>
+    }
+    else
+    {
+        <div class="page-size-chooser">
+            Items per page:
+            <select @bind="@Pagination.ItemsPerPage">
+                <option>5</option>
+                <option>10</option>
+                <option>20</option>
+                <option>100</option>
+            </select>
+        </div>
 
-    <!-- This section defines a QuickGrid for displaying customer information-->
-    <QuickGrid Items="@Customers.AsQueryable()" Pagination="@Pagination" class="quickgrid-row-divider">
-        <!-- Add buttons using TemplateColumn -->
-        <TemplateColumn >
-            <button class="btn-primary" @onclick="() => EditCustomer(context.CustomerID)">Edit</button>
-            <button class="btn-primary" @onclick="() => NewInvoice(context.CustomerID)">New Invoice</button>
-        </TemplateColumn>
-        <PropertyColumn Property="@(p => p.FirstName)" Sortable="true"/>
-        <PropertyColumn Property="@(p => p.LastName)" Sortable="true"/>
-        <PropertyColumn Property="@(p => p.City)" Sortable="true"/>
-        <PropertyColumn Property="@(p => p.Phone)" Sortable="true"/>
-        <PropertyColumn Property="@(p => p.Email)" Sortable="true"/>
-        <PropertyColumn Property="@(p => p.TotalSales)" Sortable="true"/>
-    </QuickGrid>
+        <!-- This section defines a QuickGrid for displaying customer information-->
+        <QuickGrid Items="@Customers.AsQueryable()" Pagination="@Pagination" class="quickgrid-row-divider">
+            <!-- Add buttons using TemplateColumn -->
+            <TemplateColumn>
+                <button class="btn-primary" @onclick="() => EditCustomer(context.CustomerID)">Edit</button>
+                <button class="btn-primary" @onclick="() => NewInvoice(context.CustomerID)">New Invoice</button>
+            </TemplateColumn>
+            <PropertyColumn Property="@(p => p.FirstName)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.LastName)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.City)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.Phone)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.Email)" Sortable="true" />
+            <PropertyColumn Property="@(p => p.TotalSales)" Sortable="true" />
+        </QuickGrid>
 
-    <Paginator State="@Pagination" />
-}
+        <Paginator State="@Pagination" />
+    }
 </body>
 
 <footer>
@@ -76,4 +75,3 @@ else
         </blockquote>
     }
 </footer>
-
