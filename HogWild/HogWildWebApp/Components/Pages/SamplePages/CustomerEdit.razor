@@ -1,4 +1,4 @@
-﻿﻿@page "/SamplePages/CustomerEdit/{CustomerID:int}"
+﻿@page "/SamplePages/CustomerEdit/{CustomerID:int}"
 @using HogWildWebApp.Components.Layout
 @using Microsoft.AspNetCore.Components.QuickGrid
 
@@ -17,31 +17,38 @@
     </h1>
 </header>
 <body>
+<EditForm EditContext="editContext">
     <div class="row">
         <div class="column">
-            <p> <!-- First Name -->
+            <p>
+                <!-- First Name -->
                 <label>First Name:</label>
                 <InputText id="firstName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.FirstName" />
             </p>
-            <p> <!-- Last Name -->
+            <p>
+                <!-- Last Name -->
                 <label>Last Name:</label>
                 <InputText id="lastName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.LastName" />
             </p>
-            <p> <!-- Address 1 -->
+            <p>
+                <!-- Address 1 -->
                 <label>Address 1:</label>
                 <InputText id="address1" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Address1" />
             </p>
-            <p> <!-- Address 2 -->
+            <p>
+                <!-- Address 2 -->
                 <label>Address 2:</label>
                 <InputText id="address2" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Address2" />
             </p>
-            <p> <!-- City -->
+            <p>
+                <!-- City -->
                 <label>City:</label>
                 <InputText id="city" style="width: 140px; background-color: lightgray;" @bind-Value="customer.City" />
             </p>
         </div>
         <div class="column">
-            <p> <!-- Province -->
+            <p>
+                <!-- Province -->
                 <label>Province:</label>
                 <InputSelect @bind-Value="customer.ProvStateID" style="width: 140px; background-color: lightgray;">
                     <option value="0">select...</option>
@@ -51,7 +58,8 @@
                     }
                 </InputSelect>
             </p>
-            <p> <!-- Country -->
+            <p>
+                <!-- Country -->
                 <label>Country:</label>
                 <InputSelect @bind-Value="customer.CountryID" style="width: 140px; background-color: lightgray;">
                     <option value="0">select...</option>
@@ -61,21 +69,26 @@
                     }
                 </InputSelect>
             </p>
-            <p> <!-- Postal Code -->
+            <p>
+                <!-- Postal Code -->
                 <label>Postal Code:</label>
                 <InputText id="postalCode" style="width: 140px; background-color: lightgray;" @bind-Value="customer.PostalCode" />
             </p>
-            <p> <!-- Phone -->
+            <p>
+                <!-- Phone -->
                 <label>Phone:</label>
                 <InputText id="phone" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Phone" />
             </p>
-            <p> <!-- Email -->
+            <p>
+                <!-- Email -->
                 <label>Postal Code:</label>
                 <InputText id="email" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Email" />
             </p>
-            <p> <!-- Customer status -->
+            <p>
+                <!-- Customer status -->
                 <label>Customer Status:</label>
-                <InputSelect @bind-Value="customer.StatusID" style="width: 140px; background-color: lightgray;">
+                <InputSelect @bind-Value="customer.StatusID"
+                             style="width: 140px; background-color: lightgray;">
                     <option value="0">select...</option>
                     @foreach (var status in statusLookup)
                     {
@@ -87,4 +100,26 @@
         </div>
 
     </div>
+</EditForm>
+    <button class="btn-success" @onclick="Save">Save</button>
+<button class="btn-success" @onclick="Cancel">@closeButtonText</button>
 </body>
+
+<footer>
+    @if (hasFeedback)
+    {
+        <blockquote>@feedbackMessage</blockquote>
+    }
+    @if (hasError)
+    {
+        <blockquote>
+            @errorMessage
+            <ul>
+                @foreach (var detail in errorDetails)
+                {
+                    <li>@detail</li>
+                }
+            </ul>
+        </blockquote>
+    }
+</footer>

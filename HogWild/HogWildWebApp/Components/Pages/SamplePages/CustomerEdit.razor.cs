@@ -1,6 +1,7 @@
 ﻿using HogWildSystem.BLL;
 using HogWildSystem.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using static MudBlazor.Icons;
 
 namespace HogWildWebApp.Components.Pages.SamplePages
@@ -18,6 +19,10 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         private List<LookupView> countries = new();
         //  The status lookup
         private List<LookupView> statusLookup = new();
+        // the edit context
+        private EditContext editContext;
+        // close button text
+        private string closeButtonText;
 
         #endregion
 
@@ -57,6 +62,9 @@ namespace HogWildWebApp.Components.Pages.SamplePages
             await base.OnInitializedAsync();
             try
             {
+                //  edit context needs to be setup after data has been initialized
+                //  setup of the edit context to make use of the payment type property
+                editContext = new EditContext(customer);
                 // check to see if we are navigating using a valid customer CustomerID
                 //      or arw we going to create a new customer
                 if (CustomerID > 0)
@@ -94,6 +102,52 @@ namespace HogWildWebApp.Components.Pages.SamplePages
                     errorDetails.Add(error.Message);
                 }
             }
+        }
+
+        private void Search()
+        {
+            //  reset the error detail list
+            errorDetails.Clear();
+
+            //  reset the error message to an empty string
+            errorMessage = string.Empty;
+
+            //  reset feedback message to an empty string
+            feedbackMessage = string.Empty;
+            try
+            {
+
+
+
+            }
+            catch (ArgumentNullException ex)
+            {
+                errorMessage = BlazorHelperClass.GetInnerException(ex).Message;
+            }
+            catch (ArgumentException ex)
+            {
+                errorMessage = BlazorHelperClass.GetInnerException(ex).Message;
+            }
+            catch (AggregateException ex)
+            {
+                //  have a collection of errors
+                //  each error should be place into a separate line
+                if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    errorMessage = $"{errorMessage}{Environment.NewLine}";
+                }
+                errorMessage = $"{errorMessage}Unable to search for customer";
+                foreach (var error in ex.InnerExceptions)
+                {
+                    errorDetails.Add(error.Message);
+                }
+            }
+        }
+
+
+        private async void Cancel()
+        {
+
         }
     }
 }
