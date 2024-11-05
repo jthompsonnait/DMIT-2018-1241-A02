@@ -12,6 +12,12 @@ namespace HogWildWebApp.Components.Pages.SamplePages
 
         // The Customer
         private CustomerEditView customer = new();
+        //  The provinces
+        private List<LookupView> provinces = new();
+        //  The countries
+        private List<LookupView> countries = new();
+        //  The status lookup
+        private List<LookupView> statusLookup = new();
 
         #endregion
 
@@ -39,6 +45,8 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         //  The customer service
         [Inject] protected CustomerService CustomerService { get; set; }
 
+        //  The category lookup service
+        [Inject] protected CategoryLookupService CategoryLookupService { get; set; }
         //  Customer ID used to create or edit a customer
         [Parameter] public int CustomerID { get; set; } = 0;
 
@@ -55,6 +63,11 @@ namespace HogWildWebApp.Components.Pages.SamplePages
                 {
                     customer = CustomerService.GetCustomer(CustomerID);
                 }
+
+                // lookups
+                provinces = CategoryLookupService.GetLookups("Province");
+                countries = CategoryLookupService.GetLookups("Country");
+                statusLookup = CategoryLookupService.GetLookups("Customer Status");
 
                 await InvokeAsync(StateHasChanged);
             }

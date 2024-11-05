@@ -1,33 +1,90 @@
-﻿@page "/SamplePages/CustomerEdit/{CustomerID:int}"
+﻿﻿@page "/SamplePages/CustomerEdit/{CustomerID:int}"
+@using HogWildWebApp.Components.Layout
+@using Microsoft.AspNetCore.Components.QuickGrid
 
-<PageTitle>Customer Edit</PageTitle>
+<PageTitle>CustomerEdit</PageTitle>
 
 <header>
-    Customer Edit @if (CustomerID == 0)
-                  {
-                      <H5>New Customer</H5>
-                  }
-                  else
-                  {
-                      <h5>@customer.LastName</h5>
-                  }
+    <h1>
+        Customer Edit @if (CustomerID == 0)
+        {
+            <h2>New Customer</h2>
+        }
+        else
+        {
+            <h2>@customer.LastName</h2>
+        }
+    </h1>
 </header>
-
 <body>
+    <div class="row">
+        <div class="column">
+            <p> <!-- First Name -->
+                <label>First Name:</label>
+                <InputText id="firstName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.FirstName" />
+            </p>
+            <p> <!-- Last Name -->
+                <label>Last Name:</label>
+                <InputText id="lastName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.LastName" />
+            </p>
+            <p> <!-- Address 1 -->
+                <label>Address 1:</label>
+                <InputText id="address1" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Address1" />
+            </p>
+            <p> <!-- Address 2 -->
+                <label>Address 2:</label>
+                <InputText id="address2" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Address2" />
+            </p>
+            <p> <!-- City -->
+                <label>City:</label>
+                <InputText id="city" style="width: 140px; background-color: lightgray;" @bind-Value="customer.City" />
+            </p>
+        </div>
+        <div class="column">
+            <p> <!-- Province -->
+                <label>Province:</label>
+                <InputSelect @bind-Value="customer.ProvStateID" style="width: 140px; background-color: lightgray;">
+                    <option value="0">select...</option>
+                    @foreach (var prov in provinces)
+                    {
+                        <option value="@prov.LookupID">@prov.Name</option>
+                    }
+                </InputSelect>
+            </p>
+            <p> <!-- Country -->
+                <label>Country:</label>
+                <InputSelect @bind-Value="customer.CountryID" style="width: 140px; background-color: lightgray;">
+                    <option value="0">select...</option>
+                    @foreach (var country in countries)
+                    {
+                        <option value="@country.LookupID">@country.Name</option>
+                    }
+                </InputSelect>
+            </p>
+            <p> <!-- Postal Code -->
+                <label>Postal Code:</label>
+                <InputText id="postalCode" style="width: 140px; background-color: lightgray;" @bind-Value="customer.PostalCode" />
+            </p>
+            <p> <!-- Phone -->
+                <label>Phone:</label>
+                <InputText id="phone" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Phone" />
+            </p>
+            <p> <!-- Email -->
+                <label>Postal Code:</label>
+                <InputText id="email" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Email" />
+            </p>
+            <p> <!-- Customer status -->
+                <label>Customer Status:</label>
+                <InputSelect @bind-Value="customer.StatusID" style="width: 140px; background-color: lightgray;">
+                    <option value="0">select...</option>
+                    @foreach (var status in statusLookup)
+                    {
+                        <option value="@status.LookupID">@status.Name</option>
+                    }
+                </InputSelect>
+            </p>
 
-<div class="row">
-    <p>
-        <label for="firstName">First Name:</label>
-        <InputText id="firstName" style="width: 140px; background-color: lightgray" @bind-Value="customer.FirstName" />
-    </p>
-    <p>
-        <label for="lastName">Last Name:</label>
-        <InputText id="lastName" style="width: 140px; background-color: lightgray" @bind-Value="customer.LastName" />
+        </div>
 
-        <p>
-        </p>
-        <label for="address1">Address 1:</label>
-        <InputText id="address1" style="width: 140px; background-color: lightgray" @bind-Value="customer.Address1" />
-    </p>
-</div>
+    </div>
 </body>
