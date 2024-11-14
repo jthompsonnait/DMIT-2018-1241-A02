@@ -2,7 +2,7 @@
 using HogWildSystem.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using static MudBlazor.Icons;
+using MudBlazor;
 
 namespace HogWildWebApp.Components.Pages.SamplePages
 {
@@ -19,10 +19,38 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         private List<LookupView> countries = new();
         //  The status lookup
         private List<LookupView> statusLookup = new();
+        // close button text
+        private string closeButtonText = "Close";
+        // close button color
+        private Color closeButtonColor = Color.Success;
         // the edit context
         private EditContext editContext;
-        // close button text
-        private string closeButtonText;
+        // disable the save button if customer is not modified or validate (we have errors)
+        private bool disableSaveButton => !editContext.IsModified() || !editContext.Validate();
+        //  used to store the validation message
+        private ValidationMessageStore messageStore;
+
+        /// <summary>
+        /// The show dialog
+        /// </summary>
+        private bool showDialog = false;
+        /// <summary>
+        /// The dialog message
+        /// </summary>
+        private string dialogMessage = string.Empty;
+        /// <summary>
+        /// The dialog completion source
+        /// </summary>
+        private TaskCompletionSource<bool?> dialogCompletionSource;
+
+        /// <summary>
+        /// Shows the dialog.
+        /// </summary>
+        private async Task ShowDialog()
+        {
+            dialogMessage = "Do you wish to close the invoice editor?";
+            showDialog = true;
+        }
 
         #endregion
 
@@ -52,6 +80,13 @@ namespace HogWildWebApp.Components.Pages.SamplePages
 
         //  The category lookup service
         [Inject] protected CategoryLookupService CategoryLookupService { get; set; }
+
+        // Injects the NavigationManager dependency.
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+        // the dialog service
+        [Inject]
+        protected IDialogService DialogService { get; set; }
         //  Customer ID used to create or edit a customer
         [Parameter] public int CustomerID { get; set; } = 0;
 
@@ -65,6 +100,15 @@ namespace HogWildWebApp.Components.Pages.SamplePages
                 //  edit context needs to be setup after data has been initialized
                 //  setup of the edit context to make use of the payment type property
                 editContext = new EditContext(customer);
+                //  set the validation to use the HandleValidationRequest event
+                editContext.OnValidationRequested += HandleValidationRequested;
+
+                //  setup the message store to track any validation messages
+                messageStore = new ValidationMessageStore(editContext);
+
+                //  this event will fire each time the data in a property has change.
+                editContext.OnFieldChanged += EditContext_OnFieldChanged;
+
                 // check to see if we are navigating using a valid customer CustomerID
                 //      or arw we going to create a new customer
                 if (CustomerID > 0)
@@ -104,20 +148,62 @@ namespace HogWildWebApp.Components.Pages.SamplePages
             }
         }
 
-        private void Search()
+        // Handles the validation requested.        
+        private void HandleValidationRequested(object sender, ValidationRequestedEventArgs e)
         {
-            //  reset the error detail list
-            errorDetails.Clear();
+            //  clear the message store if there is any existing validation errors.
+            messageStore?.Clear();
 
-            //  reset the error message to an empty string
-            errorMessage = string.Empty;
+            //  custom validation logic
+            //  first name is required
+            if (string.IsNullOrWhiteSpace(customer.FirstName))
+            {
+                messageStore?.Add(() => customer.FirstName, "First Name is required!");
+            }
+            //  last name is required
+            if (string.IsNullOrWhiteSpace(customer.LastName))
+            {
+                messageStore?.Add(() => customer.LastName, "Last Name is required!");
+            }
+            //  phone is required
+            if (string.IsNullOrWhiteSpace(customer.Phone))
+            {
+                messageStore?.Add(() => customer.Phone, "Phone is required!");
+            }
+            //  email is required
+            if (string.IsNullOrWhiteSpace(customer.Email))
+            {
+                messageStore?.Add(() => customer.Email, "Email is required!");
+            }
+        }
 
-            //  reset feedback message to an empty string
-            feedbackMessage = string.Empty;
+        // Handles the OnFieldChanged event of the EditContext control.
+        private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
+        {
+            //  the "editContext.Validate()" should not be needed
+            //    but if the "HandleValidationRequested" does not fire on it own
+            //    you will need to add it.  
+            editContext.Validate();
+            closeButtonText = editContext.IsModified() ? "Cancel" : "Close";
+            closeButtonColor = editContext.IsModified() ? Color.Warning : Color.Default;
+        }
+
+        private void Save()
+        {
             try
             {
+                //  reset the error detail list
+                errorDetails.Clear();
 
+                //  reset the error message to an empty string
+                errorMessage = string.Empty;
 
+                //  reset feedback message to an empty string
+                feedbackMessage = string.Empty;
+
+                //  saving the customer
+                customer = CustomerService.AddEditCustomer(customer);
+                feedbackMessage = "Data was successfully saved";
 
             }
             catch (ArgumentNullException ex)
@@ -145,9 +231,43 @@ namespace HogWildWebApp.Components.Pages.SamplePages
         }
 
 
-        private async void Cancel()
+        /// <summary>
+        /// Closes this instance.
+        /// </summary>
+        private async Task Cancel()
         {
+            // Initialize the TaskCompletionSource
+            dialogCompletionSource = new TaskCompletionSource<bool?>();
+            dialogMessage = "Do you wish to close the customer editor?";
+            showDialog = true;
+            bool? results = await ShowDialogAsync();
+            if ((bool)results)
+            {
+                NavigationManager.NavigateTo($"/SamplePages/CustomerList");
+            }
+        }
 
+        /// <summary>
+        /// Show dialog as an asynchronous operation.
+        /// </summary>
+        /// <returns>A Task&lt;System.Boolean&gt; representing the asynchronous operation.</returns>
+        private async Task<bool?> ShowDialogAsync()
+        {
+            // Initialize the TaskCompletionSource
+            dialogCompletionSource = new TaskCompletionSource<bool?>();
+
+            // Wait for the dialog to be closed and return the result
+            return await dialogCompletionSource.Task;
+        }
+
+        /// <summary>
+        /// Simples the dialog result.
+        /// </summary>
+        /// <param name="result">if set to <c>true</c> [result].</param>
+        private void SimpleDialogResult(bool? result)
+        {
+            showDialog = false;
+            dialogCompletionSource.SetResult(result);
         }
     }
 }

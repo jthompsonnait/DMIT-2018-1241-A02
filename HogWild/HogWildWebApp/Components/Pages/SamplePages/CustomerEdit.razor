@@ -1,7 +1,7 @@
 ﻿@page "/SamplePages/CustomerEdit/{CustomerID:int}"
 @using HogWildWebApp.Components.Layout
 @using Microsoft.AspNetCore.Components.QuickGrid
-
+@using MudBlazor;
 <PageTitle>CustomerEdit</PageTitle>
 
 <header>
@@ -24,11 +24,13 @@
                 <!-- First Name -->
                 <label>First Name:</label>
                 <InputText id="firstName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.FirstName" />
-            </p>
+                <ValidationMessage For="@(() => customer.FirstName)" />
+                </p>
             <p>
                 <!-- Last Name -->
                 <label>Last Name:</label>
                 <InputText id="lastName" style="width: 140px; background-color: lightgray;" @bind-Value="customer.LastName" />
+                <ValidationMessage For="@(() => customer.LastName)" />
             </p>
             <p>
                 <!-- Address 1 -->
@@ -78,12 +80,14 @@
                 <!-- Phone -->
                 <label>Phone:</label>
                 <InputText id="phone" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Phone" />
+                <ValidationMessage For="@(() => customer.Phone)" />
             </p>
             <p>
                 <!-- Email -->
-                <label>Postal Code:</label>
+                <label>Email:</label>
                 <InputText id="email" style="width: 140px; background-color: lightgray;" @bind-Value="customer.Email" />
-            </p>
+                <ValidationMessage For="@(() => customer.Email)" />
+                </p>
             <p>
                 <!-- Customer status -->
                 <label>Customer Status:</label>
@@ -101,8 +105,9 @@
 
     </div>
 </EditForm>
-    <button class="btn-success" @onclick="Save">Save</button>
-<button class="btn-success" @onclick="Cancel">@closeButtonText</button>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@disableSaveButton" @onclick="Save">Save</MudButton>
+<MudButton Variant="Variant.Filled" Color="@closeButtonColor" @onclick="Cancel">@closeButtonText</MudButton>
+
 </body>
 
 <footer>
@@ -123,3 +128,7 @@
         </blockquote>
     }
 </footer>
+
+<SimpleDialog IsVisible="@showDialog"
+              Message="@dialogMessage"
+              OnClose="@(e => SimpleDialogResult(e))"></SimpleDialog>
